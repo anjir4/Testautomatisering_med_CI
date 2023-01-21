@@ -1,57 +1,44 @@
 # Testautomation med CI - Individuell Inlämning - TESTANALYS
 
-##Vad ska testas?
-Ej bestämt. Ev serversida?
+## Vad ska testas? - Inledande undersökning
+https://tetrifact.manafeed.com/
+En sida där man kan ladda upp och lagra paket, samt ladda ned dem.
+Sidan är skriven i JS. Det finns även API, men jag ska testa UI:et.
+Sidan är skriven av min man, det är en demosida för hans projekt Tetrifact, 
+därför har jag även tillgång till källkoden: https://github.com/shukriadams/tetrifact
+
+- Göra en kort exploratory testing av sidan för att bekanta mig med den för att avgöra vad som är lämpligt att testa.
+- Ladda hem och titta på källkoden.
 
 ## Varför testar vi?
-Vi vill säkerställa att koden håller hög kvalitet, att det inte finns uppenbara buggar
+Testuppdraget är speciellt, eftersom det sker inom ramen för en skolkurs, men om det var skarpt läge
+skulle jag säga att jag vill säkerställa att det inte finns uppenbara buggar. Det är inte en väldigt
+avancerad sida, den har begränsad användning. Vi vet inte vem användaren är, men kan anta att det är någon
+med relativt god teknisk kunskap. Vi behöver inte testa användarvänlighet, vi ska testa funktion, det är viktiga.
+därför att hemsidan är ett tekniskt hjälpmedel, ett redskap. Vi skulle ev. kunna ge råd om kvalitet och hur
+effektiviteten kan ökas, om vi märker av förbättringsområden.
 
-##SFDIPOT
+## SFDIPOT
 
-Structure. Everything that comprises the physical product. 
-• Code: the code structures that comprise the product, from executables to individual routines. 
+Från SFDIPOT har jag sållit ut nedanstående, vilket jag anser är applicerbart på min produkt.
 
-Function. Everything that the product does. 
+### Function - Everything that the product does. 
 
-• Calculation: any arithmetic function or arithmetic operations embedded in other functions. 
-• Time-related: time-out settings; periodic events; time zones; business holidays; terms and warranty periods; chronograph functions.
-• Startup/Shutdown: each method and interface for invocation and initialization as well as exiting the product. 
-• Error Handling: any functions that detect and recover from errors, including all error messages.
-• Interactions: any interactions between functions within the product. 
-• Testability: any functions provided to help test the product, such as diagnostics, log files, asserts, test menus, etc.
+- Calculation: any arithmetic function or arithmetic operations embedded in other functions. 
+- Time-related: time-out settings; periodic events; time zones; business holidays; terms and warranty periods; chronograph functions.
+- Error Handling: any functions that detect and recover from errors, including all error messages.
+- Interactions: any interactions between functions within the product. 
 
-Data. Everything that the product processes. 
-• Input/Output: any data that is processed by the product, and any data that results from that processing. 
-• Preset: any data that is supplied as part of the product, or otherwise built into it, such as prefabricated databases, default values, etc. 
-• Persistent: any data that is expected to persist over multiple operations. This includes modes or states of the product, such as options settings, 
+### Data - Everything that the product processes. 
+- Input/Output: any data that is processed by the product, and any data that results from that processing. 
+- Preset: any data that is supplied as part of the product, or otherwise built into it, such as prefabricated databases, default values, etc. 
+- Persistent: any data that is expected to persist over multiple operations. This includes modes or states of the product, such as options settings, 
 view modes, contents of documents, etc.
+- Interdependent/Interacting: any data that influences or is influenced by the state of other data; or jointly influences an output.
+- Sequences/Combinations: any ordering or permutation of data, e.g. word order, sorted vs. unsorted data, order of tests.
+- Cardinality: numbers of objects or fields may vary (e.g. zero, one, many, max, open limit). Some may have to be unique (e.g. database keys).
+- Big/Little: variations in the size and aggregation of data. 
+- Invalid/Noise: any data or state that is invalid, corrupted, or produced in an uncontrolled or incorrect fashion.
 
-• Interdependent/Interacting: any data that influences or is influenced by the state of other data; or jointly influences an output.
-• Sequences/Combinations: any ordering or permutation of data, e.g. word order, sorted vs. unsorted data, order of tests.
-• Cardinality: numbers of objects or fields may vary (e.g. zero, one, many, max, open limit). Some may have to be unique (e.g. database keys).
-• Big/Little: variations in the size and aggregation of data. 
-• Invalid/Noise: any data or state that is invalid, corrupted, or produced in an uncontrolled or incorrect fashion.
-• Lifecycle: transformations over the lifetime of a data entity as it is created, accessed, modified, and deleted.
-Interfaces. Every conduit by which the product is accessed or expressed. 
-• User Interfaces: any element that mediates the exchange of data with the user (e.g. displays, buttons, fields, whether physical or virtual).
-• System Interfaces: any interface with something other than a user, such as other programs, hard disk, network, etc.
-• API/SDK: any programmatic interfaces or tools intended to allow the development of new applications using this product.
-• Import/export: any functions that package data for use by a different product, or interpret data from a different product.
-Platform. Everything on which the product depends (and that is outside your project). 
-• External Hardware: hardware components and configurations that are not part of the shipping product, but are required (or optional) for the 
-product to work: systems, servers, memory, keyboards, the Cloud.
-• External Software: software components and configurations that are not a part of the shipping product, but are required (or optional) for the 
-product to work: operating systems, concurrently executing applications, drivers, fonts, etc. 
-• Embedded Components: libraries and other components that are embedded in your product but are produced outside your project.
-• Product Footprint: The resources in the environment that are used, reserved, or consumed by the product (memory, filehandles, etc.)
-Operations. How the product will be used. 
-• Users: the attributes of the various kinds of users. 
-• Environment: the physical environment in which the product operates, including such elements as noise, light, and distractions. 
-• Common Use: patterns and sequences of input that the product will typically encounter. This varies by user.
-• Disfavored Use: patterns of input produced by ignorant, mistaken, careless or malicious use. 
-• Extreme Use: challenging patterns and sequences of input that are consistent with the intended use of the product. 
-Time. Any relationship between the product and time. 
-• Input/Output: when input is provided, when output created, and any timing relationships (delays, intervals, etc.) among them.
-• Fast/Slow: testing with “fast” or “slow” input; fastest and slowest; combinations of fast and slow.
-• Changing Rates: speeding up and slowing down (spikes, bursts, hangs, bottlenecks, interruptions). 
-• Concurrency: more than one thing happening at once (multi-user, time-sharing, threads, and semaphores, shared data). 
+### Time?
+Skulle eventuellt kunna testas, men tror jag måste avgränsa här..
