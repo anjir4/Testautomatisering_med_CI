@@ -41,4 +41,4 @@ view modes, contents of documents, etc.
 - Invalid/Noise: any data or state that is invalid, corrupted, or produced in an uncontrolled or incorrect fashion.
 
 ### Time?
-Skulle eventuellt kunna testas, men tror jag måste avgränsa här..
+Testerna ska gå snabbt att köra, dvs lägga aldrig in Wait eller Tidsargument.//JP, pres 4 (Testpyramiden), sida 16.
