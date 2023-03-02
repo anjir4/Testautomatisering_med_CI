@@ -1,6 +1,8 @@
 from unittest import TestCase
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import time
 PATH = "D:\Tools\chromedriver110.exe"
 driver = webdriver.Chrome(PATH) # Optional argument, if not specified will search path.
@@ -25,16 +27,18 @@ class basePageObjectTest(TestCase):
 
         driver.get('https://google.com/')
 
-        time.sleep(5) # Let the user actually see something!
+        try:
+            #making sure this object has loaded, as then we can assume that this
+            #relatively simple page has fully loaded and is ready for testing. 
+            element = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.NAME, "q")))
 
-        #title = driver.find_elements_by_class_name('title')
-        search_box = driver.find_element(By.NAME, "q")
-        country_button = driver.find_element(By.NAME, "btnK")
-        button_text = country_button.get_attribute("value")
-        ## button_text  == Google-søgning
-        self.assertEqual(button_text,"Google-søgning")
+            country_button = driver.find_element(By.NAME, "btnK")
+            button_text = country_button.get_attribute("value")
+            ## button_text  == Google-søgning
+            self.assertEqual(button_text,"Google-søgning")
 
-        time.sleep(5) # Let the user actually see something!
-        driver.quit()
+        finally:
+            driver.quit()
 
 
