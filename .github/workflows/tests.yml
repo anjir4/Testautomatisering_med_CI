@@ -1,8 +1,6 @@
 name: run tests
-on:
-  push:
-    tags:
-      - '*'
+on: push
+
 jobs:
 
     linux-x64:
