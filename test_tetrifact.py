@@ -109,6 +109,7 @@ class myTestClass(TestCase):
         stämmer med nuvarande tid (inom 1 min intervall). 
         """
 
+        #deklararer ett värde för den webbsida vi vill nå
         url = urllib.parse.urljoin(self.tetrifactUrl, f"package/{self.packageId}", )
         #Load the package page
         self.driver.get(url)
@@ -120,19 +121,50 @@ class myTestClass(TestCase):
             EC.presence_of_element_located((By.CLASS_NAME, "title")))
         
         #finner elementet med texten Created.
-        element = self.driver.find_element(By.XPATH, "//div[contains(.,'Created')]/following-sibling::*") # 
+        element_created = self.driver.find_element(By.XPATH, "//div[contains(.,'Created')]/following-sibling::*") # 
         #använder elementet för att få ut texten som
         #anger när uppladdningen skett, i str format
-        date = element.text
-        date_cleaned = date[0:16] #rensar strängen
+        date = element_created.text
+
+        #rensar strängen
+        date_cleaned = date[0:16] 
+
+        #konverterar strängen till datetimeformat
         date_as_datetime = datetime.datetime.strptime(date_cleaned, '%Y-%m-%d %H:%M')
+        
+        #asserterar att uppladdningstiden är inom 5 sec från asserteringstiden
+        #(en basic koll för att checka att tiden stämmer )
         self.assertAlmostEqual(datetime.datetime.now(), date_as_datetime, delta=datetime.timedelta(seconds=5000))
 
-        print("hey")
-    """
-    def test_file_count(self):
-        pass
 
+    def test_file_count(self):
+        """
+        Metod som kontrollerar att det antal filer som visas
+        motsvarar det faktiskt antalet uppladdade filer i paketet.
+        """
+
+        #deklararer ett värde för den webbsida vi vill nå
+        url = urllib.parse.urljoin(self.tetrifactUrl, f"package/{self.packageId}", )
+        #Load the package page
+        self.driver.get(url)
+
+        #En explicit wait för ett element för att säkerställa att
+        #sidan börjat laddas. Inte en garanti för fulladdad sida, men
+        #en basic check.
+        WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "title")))
+        
+        #finner elementet med texten Created.
+        element_file_count = self.driver.find_element(By.XPATH, "//div[contains(.,'File count')]/following-sibling::*") # 
+        #använder elementet för att få ut texten som
+        #anger när uppladdningen skett, i str format
+        file_count = element_file_count.text
+
+        #Antalet filer jag använder för testet är 3, 
+        #detta värde är därför hårdkodat.
+        self.assertEqual(int(file_count), 3)
+
+    """
     def test_file_size(self):
         pass
 
@@ -144,6 +176,7 @@ class myTestClass(TestCase):
     """
 
     def tearDown(self) -> None:
+        pass
         """
         Tearing down the test:
         Closing the driver and removing 
