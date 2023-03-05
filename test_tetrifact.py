@@ -9,21 +9,6 @@ import urllib.parse
 import datetime
 import re
 
-#This will open this webpage
-#driver.get("https://tetrifact.manafeed.com/")
-
-#This will print the web page title in the output window
-#print(driver.title)
-
-#This will close the webpage
-#driver.quit()
-
-#This will send keys Chromedriver to element search_box
-#search_box.send_keys('ChromeDriver')
-
-#this will submit element seach box?
-#search_box.submit()
-
 class myTestClass(TestCase):
     
     def __init__(self, methodName: str = "runTest") -> None:
