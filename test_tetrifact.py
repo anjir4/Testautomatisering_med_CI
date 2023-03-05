@@ -1,9 +1,10 @@
 from unittest import TestCase
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-import time
-PATH = "D:\Tools\chromedriver.exe"
-driver = webdriver.Chrome(PATH) # Optional argument, if not specified will search path.
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from subprocess import run
+import os
 
 #This will open this webpage
 #driver.get("https://tetrifact.manafeed.com/")
@@ -21,41 +22,85 @@ driver = webdriver.Chrome(PATH) # Optional argument, if not specified will searc
 #search_box.submit()
 
 class basePageObjectTest(TestCase):
-    pass
-
+    
+    def __init__(self, methodName: str = "runTest") -> None:
+        super().__init__(methodName)
+        self.driver = None
+        self.tetrifactUrl = 'https://testrifact.manafeed.com'
+        self.packageId = 'test_package'
 
     def setUp(self):
-        pass
         """
         setting up the test
         """
-        #New_library_app.borrowers = {}
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+
+        zipPath = os.path.join(dir_path,f'{self.packageId}.zip')
+        packageRootDir = os.path.join(dir_path,'package_content')
+
+
+        tag = 'mytag'
+        
+        # remove existing package zip
+        try:
+            if os.path.exists(zipPath):
+                print('removed existing zip')
+                os.remove(zipPath)
+        except OSError as e:
+            print(f'Error removing zip: {zipPath} : {e}')
+            raise e
+
+        result = run(
+            ['7z', 
+            'a' ,
+            zipPath, 
+            os.path.join(packageRootDir, '*')] 
+        )
+
+        print(f'zip results:{result}')
+
+        result = run(
+            ['curl',
+            '--write-out', '%{http_code}%', 
+            '--silent',             
+            '-X', 'POST', 
+            '-H', 'Transfer-Encoding:chunked', 
+            '-H', 'Content-Type:multipart/form-data', 
+            '-F', f'Files=@{zipPath}',
+            f'{self.tetrifactUrl}/v1/packages/{self.packageId}?IsArchive=true']
+        )
+
+        print(f'upload results:{result}')
+
+        PATH = "D:\Tools\chromedriver110.exe"
+        self.driver = webdriver.Chrome(PATH) # Optional argument, if not specified will search path.
+
+        self.driver.get(self.tetrifactUrl)
+
+        #Documentation for select By
+        #https://selenium-python.readthedocs.io/locating-elements.html 
+        WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "title")))
     
-    """
-    def test_class_name_title(self):
+    def test_title_text(self):
 
-        driver.get('https://www.google.com/')
+        #making sure this object has loaded, as then we can assume that this
+        #relatively simple page has fully loaded and is ready for testing.
 
-        time.sleep(5) # Let the user actually see something!
+        title = self.driver.find_element(By.CLASS_NAME, "title")
+        self.assertEqual(title.text,"Tetrifact Artifact storage")
 
-        #title = driver.find_elements_by_class_name('title')
-        title = driver.find_element(By.CLASS_NAME, "title")
-        text = title.get_attribute('innerText')
-        
-        time.sleep(5) # Let the user actually see something!
-        driver.quit()
-    """
-    def test_google(self):
+    def tearDown(self) -> None:
+        self.driver.quit()
 
-        driver.get('https://tetrifact.manafeed.com/')
+        run(
+            ['curl',
+            '--write-out', '%{http_code}%', 
+            '--silent',             
+            '-X', 'DELETE', 
+            f'{self.tetrifactUrl}/v1/packages/{self.packageId}']
+        )
 
-        time.sleep(5) # Let the user actually see something!
-
-        #title = driver.find_elements_by_class_name('title')
-        title = driver.find_element(By.CLASS_NAME, "title")
-        text = title.get_attribute('innerText')
-        
-        time.sleep(5) # Let the user actually see something!
-        driver.quit()
+        return super().tearDown()
 
 
