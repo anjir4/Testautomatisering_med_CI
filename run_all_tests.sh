@@ -1,3 +1,1 @@
-echo "All tests work"
-
-python.exe test_test.py
+python -m unittest test_tetrifact.py

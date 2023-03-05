@@ -3,8 +3,8 @@ on: push
 
 jobs:
 
-    linux-x64:
-        runs-on: ubuntu-latest
+    win-x64:
+        runs-on: self-hosted
         steps:
         - uses: actions/checkout@v1
         - name: runs the tests

@@ -7,6 +7,7 @@ from subprocess import run
 import os
 import urllib.parse
 import datetime
+import re
 
 #This will open this webpage
 #driver.get("https://tetrifact.manafeed.com/")
@@ -63,8 +64,6 @@ class myTestClass(TestCase):
             os.path.join(packageRootDir, '*')] 
         )
 
-        print(f'zip results:{result}')
-
         #Upload the package to the Tetrifact page
         result = run(
             ['curl',
@@ -76,8 +75,6 @@ class myTestClass(TestCase):
             '-F', f'Files=@{zipPath}',
             f'{self.tetrifactUrl}/v1/packages/{self.packageId}?IsArchive=true']
         )
-
-        print(f'upload results:{result}')
 
         #Set PATH
         PATH = "D:\Tools\chromedriver110.exe"
@@ -140,7 +137,7 @@ class myTestClass(TestCase):
     def test_file_count(self):
         """
         Metod som kontrollerar att det antal filer som visas
-        motsvarar det faktiskt antalet uppladdade filer i paketet.
+        motsvarar det faktiska antalet uppladdade filer i paketet.
         """
 
         #deklararer ett värde för den webbsida vi vill nå
@@ -155,19 +152,46 @@ class myTestClass(TestCase):
             EC.presence_of_element_located((By.CLASS_NAME, "title")))
         
         #finner elementet med texten Created.
-        element_file_count = self.driver.find_element(By.XPATH, "//div[contains(.,'File count')]/following-sibling::*") # 
+        element_count = self.driver.find_element(By.XPATH, "//div[contains(.,'File count')]/following-sibling::*") # 
         #använder elementet för att få ut texten som
         #anger när uppladdningen skett, i str format
-        file_count = element_file_count.text
+        file_count = element_count.text
 
         #Antalet filer jag använder för testet är 3, 
         #detta värde är därför hårdkodat.
         self.assertEqual(int(file_count), 3)
 
-    """
-    def test_file_size(self):
-        pass
 
+    def test_file_size(self):
+        
+        """
+        Metod som kontrollerar att paketstorleken som visas
+        motsvarar det faktiska antalet uppladdade filer i paketet.
+        """
+
+        #deklararer ett värde för den webbsida vi vill nå
+        url = urllib.parse.urljoin(self.tetrifactUrl, f"package/{self.packageId}", )
+        #Load the package page
+        self.driver.get(url)
+
+        #En explicit wait för ett element för att säkerställa att
+        #sidan börjat laddas. Inte en garanti för fulladdad sida, men
+        #en basic check.
+        WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "title")))
+        
+        #finner elementet med texten Created.
+        element_file_size = self.driver.find_element(By.XPATH, "//div[contains(.,'Size')]/following-sibling::*") # 
+        #använder elementet för att få ut texten som
+        #anger när uppladdningen skett, i str format
+        file_size = element_file_size.text
+        file_size = file_size.replace(",","")
+        size_cleaned = int(file_size[0:4]) 
+
+        self.assertEqual(size_cleaned, 1335)
+    
+        
+    """
     def test_tags(self):
         pass
 
