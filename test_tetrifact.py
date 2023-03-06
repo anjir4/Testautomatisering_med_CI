@@ -29,7 +29,6 @@ class myTestClass(TestCase):
         zipPath = os.path.join(dir_path,f'{self.packageId}.zip')
         packageRootDir = os.path.join(dir_path,'package_content')
 
-
         tag = 'mytag'
         
         # remove existing package zip
@@ -66,6 +65,7 @@ class myTestClass(TestCase):
 
         #Assign webdriver with PATH as argument
         self.driver = webdriver.Chrome(PATH)
+        self.driver.delete_all_cookies()
     
     def test_title_text(self):
         """
@@ -166,7 +166,7 @@ class myTestClass(TestCase):
             EC.presence_of_element_located((By.CLASS_NAME, "title")))
         
         #finner elementet med texten Created.
-        element_file_size = self.driver.find_element(By.XPATH, "//div[contains(.,'Size')]/following-sibling::*") # 
+        element_file_size = self.driver.find_element(By.XPATH, "//div[contains(.,'Size')]/following-sibling::*") 
         #använder elementet för att få ut texten som
         #anger när uppladdningen skett, i str format
         file_size = element_file_size.text
@@ -176,24 +176,86 @@ class myTestClass(TestCase):
         self.assertEqual(size_cleaned, 1335)
     
         
-    """
+
     def test_tags(self):
-        pass
+        """
+        Ger en tag till den uppladdade filen
+        """
+
+        #ger den uppladdade filen det hårdkodade värdet test_tag
+        result = run([
+            'curl',
+            '-d',
+            '-X', 'POST', 
+            f'{self.tetrifactUrl}/v1/tags/test_tag/{self.packageId}'
+            ])
+
+        print(f'tag results:{result}')
+
+        #deklararer ett värde för den webbsida vi vill nå
+        url = urllib.parse.urljoin(self.tetrifactUrl, f"package/{self.packageId}", )
+        #Load the package page
+        self.driver.get(url)
+
+        #En explicit wait för ett element för att säkerställa att
+        #sidan börjat laddas. Inte en garanti för fulladdad sida, men
+        #en basic check.
+        WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "title")))
+
+        #finner elementet med texten test_tag.
+        element_file_tag = self.driver.find_element(By.XPATH, "//a[contains(.,'test_tag')]")
+        
+        #asserterar att den skapade taggen har förväntat värde
+        self.assertEqual(element_file_tag.text, "test_tag")
+        
 
     def test_file_names(self):
-        pass
-    """
+        """
+        Metod som asserterar att de filnamn som visas på
+        hemsidan, innehåller de förväntade hårdkodade 
+        filnamnen. 
+        """
+
+        #deklararer ett värde för den webbsida vi vill nå
+        url = urllib.parse.urljoin(self.tetrifactUrl, f"package/{self.packageId}", )
+        #Load the package page
+        self.driver.get(url)
+
+        #En explicit wait för ett element för att säkerställa att
+        #sidan börjat laddas. Inte en garanti för fulladdad sida, men
+        #en basic check.
+        WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "title")))
+        
+        #finner elementet med texten test_tag.
+        element_file_names = self.driver.find_elements(By.CLASS_NAME, "listItem-text")
+
+        file_names = []
+        for element in element_file_names:
+            file_names.append(element.text)
+            
+        #assert that there are 3 elements in the array
+        #corresponding to the 3 uploaded files
+        self.assertEqual(len(element_file_names), 3)
+
+        #asserts that the file names are all found in the array
+        self.assertNotEqual(file_names.index("file01.txt"), -1)
+        self.assertNotEqual(file_names.index("file02.txt"), -1)
+        self.assertNotEqual(file_names.index("file03.txt"), -1)
+
 
     def tearDown(self) -> None:
-        pass
         """
         Tearing down the test:
         Closing the driver and removing 
         uploaded package.
         """
+        
+        #Stänger webdrivern
         self.driver.quit()
 
-
+        #tar bort det uppladdade paketet
         run(
             ['curl',
             '--write-out', '%{http_code}%', 
