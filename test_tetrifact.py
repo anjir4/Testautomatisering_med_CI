@@ -3,11 +3,10 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from subprocess import run
-import os
-import urllib.parse
+from subprocess import run #used to call programs from python
+import os #used for talking to the OS
+import urllib.parse #used to generate a url
 import datetime
-import re
 
 class myTestClass(TestCase):
     
@@ -25,13 +24,16 @@ class myTestClass(TestCase):
         Upload said package to Tetrifact page.
         Set PATH and assign the webdriver.
         """
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        zipPath = os.path.join(dir_path,f'{self.packageId}.zip')
-        packageRootDir = os.path.join(dir_path,'package_content')
+        #variable that stores the current directory I am in
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        #variable that creates a path where the zip file will be stored.
+        #the path is based off the current directory.
+        zipPath = os.path.join(current_dir,f'{self.packageId}.zip')
+        #variable that stores the directory of the files I am going to zip.
+        packageRootDir = os.path.join(current_dir,'package_content')
 
-        tag = 'mytag'
-        
-        # remove existing package zip
+        #remove existing package zip
+        #in case it is still present in the path
         try:
             if os.path.exists(zipPath):
                 print('removed existing zip')
@@ -41,7 +43,9 @@ class myTestClass(TestCase):
             raise e
 
         #Zip 3 files into a 7z package.
-        result = run(
+        #the run method takes arguments: 7z (program) - command a(add) -
+        #path to zip to - path containing what should be zipped
+        run(
             ['7z', 
             'a' ,
             zipPath, 
@@ -49,9 +53,11 @@ class myTestClass(TestCase):
         )
 
         #Upload the package to the Tetrifact page
+        #curl is a program for communicating via http
+        #arguments used was found in the product documentation
+        #https://github.com/shukriadams/tetrifact
         result = run(
             ['curl',
-            '--write-out', '%{http_code}%', 
             '--silent',             
             '-X', 'POST', 
             '-H', 'Transfer-Encoding:chunked', 
@@ -65,6 +71,8 @@ class myTestClass(TestCase):
 
         #Assign webdriver with PATH as argument
         self.driver = webdriver.Chrome(PATH)
+        
+        #Ta bort cookies, om det funnits några.
         self.driver.delete_all_cookies()
     
     def test_title_text(self):
@@ -82,13 +90,14 @@ class myTestClass(TestCase):
         WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, "title")))
 
+        #finding the title element by class name
         title = self.driver.find_element(By.CLASS_NAME, "title")
         self.assertEqual(title.text,"Tetrifact Artifact storage")
 
     def test_upload_time(self):
         """
         Metod som kontrollerar att uppladdningstiden
-        stämmer med nuvarande tid (inom 1 min intervall). 
+        stämmer med nuvarande tid (inom 5 sek intervall). 
         """
 
         #deklararer ett värde för den webbsida vi vill nå
@@ -183,6 +192,8 @@ class myTestClass(TestCase):
         """
 
         #ger den uppladdade filen det hårdkodade värdet test_tag
+        #the curl method i used to assign the tag value to the package
+        #documentation on how to tag using curl is found in the product docs
         result = run([
             'curl',
             '-d',
@@ -256,9 +267,10 @@ class myTestClass(TestCase):
         self.driver.quit()
 
         #tar bort det uppladdade paketet
+        #uses curl to delete the package on the server
+        #documentation on how to delete is found in the product docs
         run(
             ['curl',
-            '--write-out', '%{http_code}%', 
             '--silent',             
             '-X', 'DELETE', 
             f'{self.tetrifactUrl}/v1/packages/{self.packageId}']
