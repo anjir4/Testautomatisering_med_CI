@@ -8,6 +8,5 @@ jobs:
         steps:
         - uses: actions/checkout@v1
         - name: runs the tests
-          run: |
-            ./run_all_tests.bat
+          run: ./run_all_tests.bat
 
