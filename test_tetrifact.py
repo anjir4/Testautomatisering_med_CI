@@ -1,5 +1,6 @@
 from unittest import TestCase
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -69,8 +70,11 @@ class myTestClass(TestCase):
         #Set PATH
         PATH = "D:\Tools\chromedriver110.exe"
 
-        #Assign webdriver with PATH as argument
-        self.driver = webdriver.Chrome(PATH)
+        #Assign webdriver with PATH as argument, and setting
+        #it to run headless, for shorter run time.
+        options = Options()
+        options.headless = True
+        self.driver = webdriver.Chrome(PATH, options=options)
         
         #Ta bort cookies, om det funnits några.
         self.driver.delete_all_cookies()

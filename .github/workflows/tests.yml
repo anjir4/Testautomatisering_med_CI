@@ -10,7 +10,7 @@ jobs:
 
         - name: Setup Selenium
           run: pip install selenium
-          
+
         - name: runs the tests
-          run: ./run_all_tests.bat
+          run: ./run_all_tests.bat 
 
