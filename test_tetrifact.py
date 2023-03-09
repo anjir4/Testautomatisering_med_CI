@@ -73,7 +73,7 @@ class myTestClass(TestCase):
         #Assign webdriver with PATH as argument, and setting
         #it to run headless, for shorter run time.
         options = Options()
-        options.headless = True
+        options.add_argument("--headless") 
         self.driver = webdriver.Chrome(PATH, options=options)
         
         #Ta bort cookies, om det funnits några.
