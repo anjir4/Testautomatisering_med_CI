@@ -9,6 +9,7 @@ import os #used for talking to the OS
 import urllib.parse #used to generate a url
 import datetime
 
+#unittest test class
 class myTestClass(TestCase):
     
     def __init__(self, methodName: str = "runTest") -> None:
