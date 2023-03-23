@@ -69,13 +69,13 @@ class myTestClass(TestCase):
         )
 
         #Set PATH
-        PATH = "D:\Tools\chromedriver110.exe"
+        #PATH = "D:\Tools\chromedriver110.exe"
 
         #Assign webdriver with PATH as argument, and setting
         #it to run headless, for shorter run time.
         options = Options()
         options.add_argument("--headless") 
-        self.driver = webdriver.Chrome(PATH, options=options)
+        self.driver = webdriver.Chrome(options=options)
         
         #Ta bort cookies, om det funnits några.
         self.driver.delete_all_cookies()
