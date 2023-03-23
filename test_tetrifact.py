@@ -68,10 +68,7 @@ class myTestClass(TestCase):
             f'{self.tetrifactUrl}/v1/packages/{self.packageId}?IsArchive=true']
         )
 
-        #Set PATH
-        #PATH = "D:\Tools\chromedriver110.exe"
-
-        #Assign webdriver with PATH as argument, and setting
+        #Assign webdriver and setting
         #it to run headless, for shorter run time.
         options = Options()
         options.add_argument("--headless") 
